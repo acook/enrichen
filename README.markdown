@@ -14,9 +14,10 @@ Enriching a Machine
 
 1. Have `curl` and `bash` available.
 2. Install its other prerequisites as well as Enrichen itself:
-  ~~~sh
-  \curl -L https://raw.github.com/acook/enrichen/master/setup/local_install | bash
-  ~~~
+
+~~~sh
+\curl -L https://raw.github.com/acook/enrichen/master/setup/local_install | bash
+~~~
 
 If you wish to apply a set of Enrichments at the same time you can pass in the github repo like this:
 
@@ -38,9 +39,10 @@ enrich gh:acook/enrichments/nginx
 1. Have `SSH` installed on the local and remote machines.
 2. Have `Enrichen` installed on the local machine.
 3. Then use the `remote` command:
-  ~~~sh
-  enrich remote user@example.com
-  ~~~
+
+~~~sh
+enrich remote user@example.com
+~~~
 
 If you wish to apply a set of Enrichments at the same time you can pass in the github repo like this:
 
