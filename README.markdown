@@ -10,7 +10,7 @@ Enriching a Machine
 -------------------
 
 
-### Local Setup
+### Local Install
 
 1. Have `curl` and `bash` available.
 2. Install its other prerequisites as well as Enrichen itself:
@@ -34,7 +34,7 @@ enrich gh:acook/enrichments/nginx
 ~~~
 
 
-### Remote Setup
+### Remote Install
 
 1. Have `SSH` installed on the local and remote machines.
 2. Have `Enrichen` installed on the local machine.
@@ -55,7 +55,7 @@ You may also pass in a path or any valid git URI. Multiple Enrichments can be co
 The same `enrich remote` command can be used to apply additional Enrichments at any time.
 
 
-### Remote Setup Without Local Enrichen
+### Remote Install Without Local Enrichen
 
 If you do **not** have Enrichen installed locally and for some reason do not wish to you can still Enrich remote machines like this:
 
