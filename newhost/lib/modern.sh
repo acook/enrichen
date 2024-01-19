@@ -39,7 +39,12 @@ if [[ $MODERN_QUIET != "true" ]]; then
   echo " -- ($(basename "$(dirname "$(readlink -m "${BASH_SOURCE[-1]}")")")/$(basename "${BASH_SOURCE[-1]}") @ $(date "+%Y-%m-%d %T")) : setting up..." >&2
 fi
 
-
+array_contains () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
 
 say()  {
   if [[ $MODERN_QUIET == "true" ]]; then
@@ -114,7 +119,42 @@ hilite() {
     sed "s/$REGEX_SED/$2&$(colorreset)/g"
 }
 
+ok()   { say "\e[32m(ok) $*\e[0m"; exit 0; }
 
+die()  { warn "\e[31m(die) $*\e[0m"; exit 1; }
+
+die_status() { warn "\e[31m(died with status code $1) ${*:2}\e[0m"; exit "$1"; }
+
+quit_status() {
+  if scriptsame; then
+    if [[ $1 -eq 0 ]]; then
+      ok "${*:2}"
+    else
+      die_status "$@"
+    fi
+  else
+    if [[ $1 -eq 0 ]]; then
+      say "${*:2}"
+    else
+      warn "${*:2}"
+    fi
+    return "$1"
+  fi
+}
+
+resolvepath() {
+  p="$1"
+  while [[ -h $p ]]; do
+    d="$( cd -P "$( dirname "$p" )" && pwd )"
+    p="$(readlink -e "$p")"
+    [[ $p != /* ]] && p="$d/$p"
+  done
+  cd -P "$(dirname "$p")" && pwd
+}
+
+thisdir() {
+  dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")"
+}
 
 displayname() {
   basename -z "$(dirname "$(readlink -m "$1")")" | tr -d '\0'
@@ -185,38 +225,11 @@ _set_current_script() {
   MODERN_CURRENT_FULLPATH=$(readlink -m "$script");
 }
 
-
-
-ok()   { say "\e[32m(ok) $*\e[0m"; exit 0; }
-
-die()  { warn "\e[31m(die) $*\e[0m"; exit 1; }
-
-die_status() { warn "\e[31m(died with status code $1) ${*:2}\e[0m"; exit "$1"; }
-
-quit_status() {
-  if scriptsame; then
-    if [[ $1 -eq 0 ]]; then
-      ok "${*:2}"
-    else
-      die_status "$@"
-    fi
-  else
-    if [[ $1 -eq 0 ]]; then
-      say "${*:2}"
-    else
-      warn "${*:2}"
-    fi
-    return "$1"
-  fi
-}
-
-
 ts()      { date "+%Y-%m-%d %T"; }
 
 ts_file() { date --utc "+%Y-%m-%d-%H-%M-%S"; }
 
 ts_unix() { date "+%s.%N"; }
-
 
 elapsed() {
   started_at=$1
@@ -237,8 +250,6 @@ elapsed() {
     warn "END: $ended_at"
   fi
 }
-
-
 
 safe_cd() {
   say "entering directory \`$1\`"
@@ -270,7 +281,6 @@ run_or_die() {
   [[ $EXITSTATUS ]] || die_status $EXITSTATUS "$2 command"
 }
 
-
 gfix() {
   if command_exists "g$1"; then
     "g$1" "${@:2}"
@@ -299,7 +309,6 @@ if [[ Darwin = $(uname) ]]; then
 
 fi
 
-
 MODERN_SCRIPT_ORIG_PWD="$(pwd -P)"
 
 MODERN_SCRIPT_FULLPATH="$(readlink -e "${BASH_SOURCE[0]}")"
@@ -326,3 +335,4 @@ export MODERN_MAIN_EXE
 export MODERN_CURRENT_FULLPATH
 
 _set_current_script
+
