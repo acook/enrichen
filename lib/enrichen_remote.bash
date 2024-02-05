@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-source "$(dirname "${BASH_SOURCE[0]}")/lib/modern.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/modern.sh"
 
 remote_host="$1"
-enrichments_dir="$MODERN_MAIN_DIR/enrichments"
+enrichments_dir="$MODERN_MAIN_DIR/../enrichments"
 setup_script="newhost_setup.bash"
 
 say "detected current directory as: '$(thisdir)'"

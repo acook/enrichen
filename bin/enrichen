@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/modern.sh"
+safe_cd "$MODERN_MAIN_DIR"
+
+subcommand="$1"
+shift
+
+# parse sub-commands
+case $subcommand in
+  remote)
+    ../lib/enrichen_remote.bash "$@"
+  ;;
+esac
