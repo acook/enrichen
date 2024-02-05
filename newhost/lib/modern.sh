@@ -142,6 +142,14 @@ quit_status() {
   fi
 }
 
+txcp() {
+    ssh "$1" "cat > '$3'" < "$2"
+}
+
+rxcp() {
+  ssh "$1" "cat $2" > "$3"
+}
+
 resolvepath() {
   p="$1"
   while [[ -h $p ]]; do
@@ -153,7 +161,7 @@ resolvepath() {
 }
 
 thisdir() {
-  dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")"
+  dirname -- "$(scriptcaller)"
 }
 
 displayname() {
@@ -256,7 +264,7 @@ safe_cd() {
   cd "$1" || die "safe_cd: couldn't change directory to \`$1\`";
 }
 
-command_exists() { command -v "$1" > /dev/null 2>&1; }
+command_exists() { command -v "$1" 1>&- 2>&-; }
 
 run() {
   local EXITSTATUS
@@ -321,6 +329,8 @@ MODERN_MAIN_DIR="$(dirname "$MODERN_MAIN_FULLPATH")"
 MODERN_MAIN_EXE="$(basename "$MODERN_MAIN_DIR")/$MODERN_MAIN_NAME"
 
 MODERN_CURRENT_FULLPATH=$MODERN_SCRIPT_FULLPATH
+
+export MODERN_SCRIPT_ORIG_PWD
 
 export MODERN_SCRIPT_FULLPATH
 export MODERN_SCRIPT_NAME
