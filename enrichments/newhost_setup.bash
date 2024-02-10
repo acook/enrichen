@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-echo "$USER@$(hostname):$PWD"
+echo -e "\e[33m$USER@$(hostname):$PWD\e[0m"
