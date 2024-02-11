@@ -18,21 +18,30 @@ else
   ssh_remote_host="$remote_host"
 fi
 
-say "streaming commands to remote host"
-
-mkdir -v -p "$MODERN_MAIN_DIR/../tmp"
-safe_cd "$MODERN_MAIN_DIR/../tmp"
+say "streaming commands to remote host..."
 
 sshpipe_new "$ssh_remote_host"
 
-cat "$MODERN_MAIN_DIR/../lib/remote_prompt.bash" "$MODERN_SCRIPT_FULLPATH" "$enrichments_dir/$enrichments" "$enrichments_dir/$setup_script" >&13
+# the sshpipe currently has no way to report that it is ready
+# so we can wait to ensure the connection is complete
+# otherwise the output of commands will be broken for some reason
+sleep 2
+
+stripscript >&13 < "$MODERN_MAIN_DIR/../lib/remote_prompt.bash"
 sshpipe_rx "$ssh_remote_host"
-sleep 5
+stripscript >&13 < "$MODERN_SCRIPT_FULLPATH"
+sshpipe_rx "$ssh_remote_host"
+stripscript >&13 < "$enrichments_dir/$setup_script"
+sshpipe_rx "$ssh_remote_host"
+stripscript >&13 < "$enrichments_dir/$enrichments"
+sshpipe_rx "$ssh_remote_host"
 
 echo '> test.bash < /dev/stdin' >&13
 echo 'echo -e "\e[31mITS ALIVE\e[0m"' >&13
 echo -e '\004' >&13
 echo 'bash test.bash' >&13
 
+# wait to ensure all commands are complete before moving on
+sleep 1
 sshpipe_rx "$ssh_remote_host"
 sshpipe_close "$ssh_remote_host"
