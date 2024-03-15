@@ -48,14 +48,6 @@ sshpipe_rx "$ssh_remote_host"
 
 sleep 1
 
-say "testing remote file creation"
-#echo '> test.bash < /dev/stdin' >&13
-echo 'cat /dev/stdin > test.bash' >&13
-echo 'echo -e "\e[31mITS ALIVE\e[0m"' >&13
-echo -e '\004' >&13
-echo 'bash test.bash' >&13
-sshpipe_tx kigal cat test.bash
-
 say "getting latest output"
 # wait to ensure all commands are complete before moving on
 sleep 1
