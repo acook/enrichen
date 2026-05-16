@@ -18,20 +18,12 @@ else
   ssh_remote_host="$remote_host"
 fi
 
-say "streaming commands to remote host..."
+say "opening connection to remote host..."
 
 sshpipe_new "$ssh_remote_host"
+sshpipe_hostinfo "$ssh_remote_host"
 
-if INFO="$(sshpipe_status "$ssh_remote_host" -p)"; then
-  echo -e "\e[31m"
-  echo -n "SHELL: "
-  echo "$INFO" | cut -s -d '|' -f 1
-  echo -n "USER:  "
-  echo "$INFO" | cut -s -d '|' -f 2
-  echo -n "PWD:   "
-  echo "$INFO" | cut -s -d '|' -f 3
-  echo -e "\e[0m"
-fi
+say "streaming commands to remote host..."
 
 say "loading remote prompt onto remote"
 stripscript >&13 < "$MODERN_MAIN_DIR/../lib/remote_prompt.bash"
@@ -53,15 +45,6 @@ say "getting latest output"
 sleep 1
 sshpipe_rx "$ssh_remote_host"
 
-if INFO="$(sshpipe_status "$ssh_remote_host" -p)"; then
-  echo -e "\e[31m"
-  echo -n "SHELL: "
-  echo "$INFO" | cut -s -f 1
-  echo -n "USER:  "
-  echo "$INFO" | cut -s -f 2
-  echo -n "PWD:   "
-  echo "$INFO" | cut -s -f 3
-  echo -e "\e[0m"
-fi
 
+sshpipe_hostinfo "$ssh_remote_host"
 sshpipe_close "$ssh_remote_host"
